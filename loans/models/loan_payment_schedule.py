@@ -42,19 +42,19 @@ class LoanPaymentSchedule(models.Model):
     def __str__(self):
         return f"Loan {self.loan.id} - Month {self.month_index} ({self.status})"
 
-@transaction.atomic
-def mark_paid(self):
-    today = date.today()
-    if self.due_date > today:
-        raise ValueError("Cannot pay in advance.")
+    @transaction.atomic
+    def mark_paid(self):
+        today = date.today()
+        if self.due_date > today:
+            raise ValueError("Cannot pay in advance.")
 
-    try:
-        with transaction.atomic():
-            self.status = self.STATUS_PAID
-            self.paid_at = timezone.now()
-            self.save()
-            self.loan.add_payment(self.total_payment, self.late_fee_amount)
-    except Exception as e:
-        print(f"[ROLLBACK] Payment failed: {e}")
-        raise 
-    print("✅ Payment and loan updated successfully")
+        try:
+            with transaction.atomic():
+                self.status = self.STATUS_PAID
+                self.paid_at = timezone.now()
+                self.save()
+                self.loan.add_payment(self.total_payment, self.late_fee_amount)
+        except Exception as e:
+            print(f"[ROLLBACK] Payment failed: {e}")
+            raise 
+        print("✅ Payment and loan updated successfully")
