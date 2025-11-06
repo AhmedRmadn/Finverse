@@ -1,11 +1,11 @@
 from django.db import models
 from django.conf import settings
-from decimal import Decimal, getcontext
+from decimal import Decimal
 from django.utils import timezone
-from datetime import date
-import calendar
 from django.db import transaction
 from .loan_payment_schedule import LoanPaymentSchedule
+###import function generate_amortization_schedule from loans/utils/amortization_schedule.py
+from loans.utils.amortization_schedule import generate_amortization_schedule
 
 class Loan(models.Model):
     STATUS_DRAFT = "draft"
@@ -60,73 +60,29 @@ class Loan(models.Model):
         self.applied_at = timezone.now()
         self.save()
     
-    @staticmethod
-    def _first_of_next_month(d: date) -> date:
-        year = d.year + (d.month // 12)
-        month = (d.month % 12) + 1
-        return date(year, month, 1)
-
-    @staticmethod
-    def _add_months(d: date, months: int) -> date:
-        month = d.month - 1 + months
-        year = d.year + month // 12
-        month = month % 12 + 1
-        day = min(d.day, calendar.monthrange(year, month)[1])
-        return date(year, month, day)
-
     @transaction.atomic
     def approve(self, admin_user):
         self.status = self.STATUS_APPROVED
         self.approved_by = admin_user
         self.approved_at = timezone.now()
         self.save()
+        schedule_dicts = generate_amortization_schedule(self)
 
-        getcontext().prec = 28
-        P = self.amount
-        annual_rate = self.annual_interest_rate
-        r = annual_rate / Decimal("100") / Decimal("12") 
-        n = int(self.term_years) * 12
-        if r == 0:
-            M = (P / Decimal(n)).quantize(Decimal("0.01"))
-        else:
-            M = (P * (r * (1 + r) ** n) / ((1 + r) ** n - 1)).quantize(Decimal("0.01"))
-
-        balance = P
-        approved_date = timezone.now().date()
-        first_due = self._first_of_next_month(approved_date)
-
-        gap = (first_due - approved_date).days
-        if gap < 10:
-            first_due = self._first_of_next_month(first_due)  
-        
-        rows = []
-
-        for i in range(1, n + 1):
-            interest = (balance * r).quantize(Decimal("0.01"))
-            principal = (M - interest).quantize(Decimal("0.01"))
-            if i == n:
-                principal = balance.quantize(Decimal("0.01"))
-                M_last = (interest + principal).quantize(Decimal("0.01"))
-            else:
-                M_last = M
-
-            balance = (balance - principal).quantize(Decimal("0.01"))
-
-            due_date = self._add_months(first_due, i - 1) 
-
-            rows.append(
-                LoanPaymentSchedule(
-                    loan=self,
-                    user=self.created_by,
-                    month_index=i,
-                    due_date=due_date,
-                    principal_component=principal,
-                    interest_component=interest,
-                    total_payment=M_last,
-                    status=LoanPaymentSchedule.STATUS_PENDING,
-                    late_fee_amount=Decimal("0.00"),
-                )
+        rows = [
+            LoanPaymentSchedule(
+                loan=self,
+                user=self.created_by,
+                month_index=data["month_index"],
+                due_date=data["due_date"],
+                principal_component=data["principal_component"],
+                interest_component=data["interest_component"],
+                total_payment=data["total_payment"],
+                status=LoanPaymentSchedule.STATUS_PENDING,
+                late_fee_amount=Decimal("0.00"),
             )
+            for data in schedule_dicts
+        ]
+
         LoanPaymentSchedule.objects.bulk_create(rows)
 
     
