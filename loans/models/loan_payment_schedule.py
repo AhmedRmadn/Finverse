@@ -38,7 +38,7 @@ class LoanPaymentSchedule(models.Model):
     paid_at = models.DateTimeField(null=True, blank=True)
     was_late = models.BooleanField(default=False)
     late_fee_amount = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0.00"))
-
+    updated_at = models.DateTimeField(auto_now=True)
     def __str__(self):
         return f"Loan {self.loan.id} - Month {self.month_index} ({self.status})"
 
