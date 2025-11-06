@@ -54,8 +54,7 @@ class Loan(models.Model):
     admin_note = models.TextField(null=True, blank=True)
 
 
-    def apply(self, monthly_payment):
-        self.monthly_payment = monthly_payment
+    def apply(self):
         self.status = self.STATUS_PENDING
         self.applied_at = timezone.now()
         self.save()
