@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from ..models import Loan
-
+from loans.utils.send_email import rejection_email
+import threading
 class LoanRejectSerializer(serializers.ModelSerializer):
     admin_note = serializers.CharField(required=True)
 
@@ -18,4 +19,5 @@ class LoanRejectSerializer(serializers.ModelSerializer):
         loan = self.instance
         admin_user = self.context["request"].user 
         loan.reject(admin_user)
+        threading.Thread(target=rejection_email, args=(loan,)).start()
         return loan

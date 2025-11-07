@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from ..models import Loan
+from loans.utils.send_email import approval_email
+import threading
 class LoanApproveSerializer(serializers.ModelSerializer):
     class Meta:
         model = Loan
@@ -15,5 +17,6 @@ class LoanApproveSerializer(serializers.ModelSerializer):
         loan = self.instance
         admin_user = self.context["request"].user 
         loan.approve(admin_user)  
+        threading.Thread(target=approval_email, args=(loan,)).start()
         return loan
     
