@@ -23,6 +23,7 @@ def generate_amortization_schedule(loan):
     r = annual_rate / Decimal("100") / Decimal("12") 
     n = int(loan.term_years) * 12
     M = loan.monthly_payment
+
     approved_date = timezone.now().date()
     first_due = first_of_next_month(approved_date)
 

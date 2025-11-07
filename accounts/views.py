@@ -7,4 +7,4 @@ class RegisterView(generics.CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
-        return Response({"message": "User registered successfully"})
+        return Response({"message": "User registered successfully"}, status=201)
