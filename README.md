@@ -104,7 +104,7 @@ All endpoints require a JWT Bearer Token in the `Authorization` header, except f
 ---
 
 <details>
-<summary>🏠 <strong>AddressController</strong></summary>
+<summary>🏠 <strong>Customer API</strong></summary>
 
 ### 🧾 Create Loan (Draft)
 - **Method**: `POST`
@@ -195,7 +195,7 @@ All endpoints require a JWT Bearer Token in the `Authorization` header, except f
 ---
 
 <details>
-<summary>📂 <strong>CategoryController</strong></summary>
+<summary>📂 <strong>Admin Api</strong></summary>
 
 ###  Admin – List Pending Loans
 - **Method**: `POST`
