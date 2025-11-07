@@ -18,16 +18,11 @@ def add_months(d: date, months: int) -> date:
 
 def generate_amortization_schedule(loan):
     getcontext().prec = 28
-    P = loan.amount
+    balance = loan.amount
     annual_rate = loan.annual_interest_rate
     r = annual_rate / Decimal("100") / Decimal("12") 
     n = int(loan.term_years) * 12
-    if r == 0:
-        M = (P / Decimal(n)).quantize(Decimal("0.01"))
-    else:
-        M = (P * (r * (1 + r) ** n) / ((1 + r) ** n - 1)).quantize(Decimal("0.01"))
-
-    balance = P
+    M = loan.monthly_payment
     approved_date = timezone.now().date()
     first_due = first_of_next_month(approved_date)
 
