@@ -10,8 +10,6 @@ env/
 venv/
 .venv/
 .env
-.env.*
-! .env.example
 
 # --- Django ---
 *.log
