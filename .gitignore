@@ -1,0 +1,42 @@
+# --- Python & General ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# --- Environments ---
+env/
+venv/
+.venv/
+.env
+.env.*
+! .env.example
+
+# --- Django ---
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+staticfiles/
+
+# --- Media (User Uploads) ---
+# Ignore the content of media, but keep the folder structure
+media/*
+!media/.gitkeep
+
+# --- Docker ---
+# If you mapped volumes locally (optional)
+postgres_data/
+pgdata/
+
+# --- Project Specific (Finverse) ---
+# Generated reports/exports mentioned in your code
+*.csv
+*.xlsx
+export/
+
+# --- IDE & Editor settings ---
+.vscode/
+.idea/
+.DS_Store
