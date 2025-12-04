@@ -5,7 +5,13 @@ set -e
 
 echo "🚀 Starting Finverse setup..."
 
-mv .env.example .env
+# 0. Create .env from example if it doesn't exist
+if [ ! -f .env ]; then
+    echo "📄 No .env found. Creating one from .env.example..."
+    cp .env.example .env
+else
+    echo "✅ .env already exists. Skipping copy."
+fi
 
 # 1. Build and Start Containers
 echo "🐳 Building and starting Docker containers..."
