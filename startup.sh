@@ -5,6 +5,8 @@ set -e
 
 echo "🚀 Starting Finverse setup..."
 
+mv .env.example .env
+
 # 1. Build and Start Containers
 echo "🐳 Building and starting Docker containers..."
 docker compose up -d --build
