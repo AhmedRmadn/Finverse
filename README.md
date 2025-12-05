@@ -383,7 +383,61 @@ The application uses PostgreSQL with the following main entities:
 - sqlparse==0.5.3  
 - tzdata==2025.2  
 
+## 🐳 Running with Docker (Recommended)
 
+This project includes a fully Dockerized setup with PostgreSQL and Django pre-configured. It includes an automation script to handle building, migrations, and initial setup.
+
+### 1️⃣ Prerequisites
+- **Docker** and **Docker Compose** installed on your machine.
+
+### 2️⃣ Quick Start
+We have provided a `startup.sh` script that automatically:
+1. Creates a `.env` file (if missing).
+2. Builds and starts the containers.
+3. Runs database migrations.
+4. Creates a default Superuser.
+5. Collects static files.
+
+Run the following command in your terminal:
+
+```bash
+# Make the script executable (first time only)
+chmod +x startup.sh
+
+# Run the project
+./startup.sh
+```
+
+### 3️⃣ Accessing the App
+Once the script finishes, the server will be live at:
+
+- **API Root**: [http://localhost:8000/](http://localhost:8000/)
+- **Admin Panel**: [http://localhost:8000/admin/](http://localhost:8000/admin/)
+
+**Default Admin Credentials:**
+- **Username:** `admin`
+- **Password:** `admin123`
+*(You can change these in your `.env` file later)*
+
+---
+
+### 🛑 Stopping the App
+To stop the containers and remove the networks (your database data will be preserved in the Docker volume):
+
+```bash
+docker compose down
+```
+
+### 🧹 Troubleshooting
+If you need to wipe the database and start fresh (e.g., if you messed up migrations):
+
+```bash
+# Stop containers and delete the database volume
+docker compose down -v
+
+# Restart fresh
+./startup.sh
+```
 ## 🚀 Future Enhancements
 
 ### ✅ Payment System Integration
